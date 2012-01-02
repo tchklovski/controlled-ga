@@ -1,0 +1,38 @@
+# controlled-ga
+
+search of approximators;
+for example, we could search for
+(fn [a, b] (expt (+ (expt a 2) (expt b 2)) (/ 1 2)))
+
+the crux is in the mutation language.
+
+## Usage
+
+FIXME: write
+(defun clojure-kill-swank ()
+  "Kill swank process started by lein swank."
+  (interactive)
+  (let ((process (get-buffer-process "*clojure-swank*")))
+    (when process
+      (ignore-errors (slime-quit-lisp))
+      (let ((timeout 10))
+        (while (and (> timeout 0)
+                    (eql 'run (process-status process)))
+          (sit-for 1)
+          (decf timeout)))
+      (ignore-errors (kill-buffer "*clojure-swank*")))))
+
+
+(defn target-fn
+  [a b]
+  (let [dim 2]
+    (expt (+
+           (expt a dim)
+           (expt b dim))
+          (/ dim))))
+
+## License
+
+Copyright (C) 2012 FIXME
+
+Distributed under the Eclipse Public License, the same as Clojure.
