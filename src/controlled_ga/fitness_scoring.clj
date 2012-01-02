@@ -1,15 +1,21 @@
-(ns controlled-ga.scoring
+(ns controlled-ga.fitness-scoring
   (:use [clojure.math.numeric-tower :only [expt]]))
 
 (def compute-fitnesses)
 (def compute-fitness)
 
+(defn rmse
+  [errors]
+  (let [sqr  #(expt % 2)
+        sqrt #(expt % 0.5)
+        mean #(/ (apply + %) (count %))]
+    (sqrt (mean (map sqr errors)))))
+
 (defn score-candidates
-  "returns ([cand1 sc1] ...), sorted by increasing error"
+  "returns candidates with :err err-val added; sorts cands by increasing error"
   [target-fn candidates]
   (let [scores (compute-fitnesses target-fn (map :fn candidates))
-        scored-candidates (map #(assoc %1 :err %2) candidates scores)
-        ]
+        scored-candidates (map #(assoc %1 :err %2) candidates scores)]
     (sort-by :err scored-candidates)))
 
 (defn compute-fitnesses
@@ -25,8 +31,5 @@
   "compute fitness of one function"
   [targetvalues testpoints f]
   (let [actualvalues (map f testpoints)
-        score-one-point (fn [actual target] (expt (- actual target) 2))
-        scores (map score-one-point actualvalues targetvalues)
-        average #(/ (apply + %) (count %))
-        normalize-average-score #(expt % 0.5)]
-    (normalize-average-score (average scores))))
+        errors (map - actualvalues targetvalues)]
+    (rmse errors)))

@@ -1,6 +1,6 @@
 (ns controlled-ga.core
   (:use [clojure.math.numeric-tower :only [expt]]
-        [controlled-ga scoring mutation]
+        [controlled-ga fitness-scoring mutation]
         ))
 
 (defn target-fn
@@ -25,4 +25,8 @@
 
 (defn show-scored-candidates
   [cands]
-  (map #(vector (:err %) (:expr %)) cands))
+  (map #(vec (map % [:err :expr])) cands))
+
+; (in-ns 'controlled-ga.core)
+;(use '(incanter core stats charts))
+;(view (function-plot target-fn 0 1))
