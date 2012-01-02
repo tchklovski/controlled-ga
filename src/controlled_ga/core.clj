@@ -1,6 +1,5 @@
 (ns controlled-ga.core
-  (:use [clojure.math.numeric-tower :only [expt]]
-        [controlled-ga fitness-scoring mutation]
+  (:use [controlled-ga fitness-scoring mutation]
         ))
 
 (defn target-fn
