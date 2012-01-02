@@ -8,15 +8,21 @@
   (+ (* x x) 0.5))
 
 
-(def candidates
+(def raw-candidates
      '[x
        (* x x)])
 
-(def make-fn
-  (memoize #(eval (list 'fn '[x] %))))
+(defn make-candidate
+  [cand]
+  (let [make-fn (memoize #(eval (list 'fn '[x] %)))]
+    {:expr cand
+     :fn (make-fn cand)}))
 
-(defn score-candidates
-  []
-  (let [candidate-fns (map make-fn candidates)]
-    (compute-fitnesses target-fn candidate-fns)))
+(defn score-raw-candidates
+  [raw-candidates target-fn]
+  (let [candidates (map make-candidate raw-candidates)]
+    (score-candidates target-fn candidates)))
 
+(defn show-scored-candidates
+  [cands]
+  (map #(vector (:err %) (:expr %)) cands))

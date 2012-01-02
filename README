@@ -1,28 +1,22 @@
 # controlled-ga
 
-search of approximators;
-for example, we could search for
-(fn [a, b] (expt (+ (expt a 2) (expt b 2)) (/ 1 2)))
+just trying to learn a little (more) clojure, and experiment with some
+ideas about "accelerating search".
 
-the crux is in the mutation language.
+we search for approximators of a target function;
+for example, we could search for
+(fn [x] (* x x))
+We assess functions using rmse on [0,1]
+
+the crux is in the mutator that generates candidates.
+We want to mutate the mutators, identifying those that are able to improve
+how the search evolves.
 
 ## Usage
 
-FIXME: write
-(defun clojure-kill-swank ()
-  "Kill swank process started by lein swank."
-  (interactive)
-  (let ((process (get-buffer-process "*clojure-swank*")))
-    (when process
-      (ignore-errors (slime-quit-lisp))
-      (let ((timeout 10))
-        (while (and (> timeout 0)
-                    (eql 'run (process-status process)))
-          (sit-for 1)
-          (decf timeout)))
-      (ignore-errors (kill-buffer "*clojure-swank*")))))
 
-
+## Misc
+two-var target fn:
 (defn target-fn
   [a b]
   (let [dim 2]
@@ -33,6 +27,6 @@ FIXME: write
 
 ## License
 
-Copyright (C) 2012 FIXME
+Copyright (C) 2012 Timothy Chklovski
 
 Distributed under the Eclipse Public License, the same as Clojure.

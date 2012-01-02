@@ -1,7 +1,16 @@
 (ns controlled-ga.scoring
   (:use [clojure.math.numeric-tower :only [expt]]))
 
+(def compute-fitnesses)
 (def compute-fitness)
+
+(defn score-candidates
+  "returns ([cand1 sc1] ...), sorted by increasing error"
+  [target-fn candidates]
+  (let [scores (compute-fitnesses target-fn (map :fn candidates))
+        scored-candidates (map #(assoc %1 :err %2) candidates scores)
+        ]
+    (sort-by :err scored-candidates)))
 
 (defn compute-fitnesses
   [target-fn fns]
@@ -11,7 +20,6 @@
         targetvalues (map target-fn testpoints)]
     (map (partial compute-fitness targetvalues testpoints)
          fns)))
-
 
 (defn compute-fitness
   "compute fitness of one function"
