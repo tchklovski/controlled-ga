@@ -16,6 +16,19 @@ how the search evolves.
 
 
 ## Misc
+
+the expression could capture how much of its own mutation it will permit --
+it should evolve to solidify over time
+
+we should feed a bunch of vairables that the system is free to attend to or to ignore
+
+parsimomy reward is somewhat useful?
+
+can have a library of substitutions, with recognizers/advisers of when to try them.
+
+
+even more simply, could be approximating an irrational number like PI with algebraic expressions.
+
 two-var target fn:
 (defn target-fn
   [a b]

@@ -1,7 +1,11 @@
 (ns controlled-ga.fitness-scoring
   (:use [clojure.math.numeric-tower :only [expt]]))
 
-(def compute-fitnesses)
+;; FIXME -- this belongs in the individual defintion file
+(defn run-individual
+  [cand input]
+  ;; for our candidates, input is a sequence of input values for the candidate's :fn
+  (map (:fn cand) input))
 
 (defn rmse
   ([actualvalues targetvalues]
@@ -14,15 +18,22 @@
 
 (defn score-candidates
   "returns candidates with :err err-val added; sorts cands by increasing error"
-  [target-fn candidates]
-  (let [errors (compute-fitnesses target-fn (map :fn candidates))
+  [fitness-fn candidates]
+  (let [errors (map fitness-fn candidates)
         scored-candidates (map #(assoc %1 :err %2) candidates errors)]
     (sort-by :err scored-candidates)))
 
-(defn compute-fitnesses
-  [target-fn fns]
-  (let [num-test-points 100
-        generate-test-points #(range 0 1 (/ %)) ;; #(take % (repeatedly rand))
-        testpoints (generate-test-points num-test-points)
-        targetvalues (map target-fn testpoints)]
-    (map #(rmse (map % testpoints) targetvalues) fns)))
+(defn make-fitness-fn
+  "returns a function that takes a candidate (with a :fn) and returns that candidate's error"
+  ;; could return more than error -- observations on improvement
+  [target]
+  (let [test-input (range 0 1 0.01) ;; (take 100 (repeatedly rand))
+        run-on-test-input #(run-individual % test-input)
+        target-output (run-on-test-input target)]
+    (fn [candidate]
+      (rmse (run-on-test-input candidate) target-output))))
+
+;; simpler than improving a solution, there is simpliy "understanding" what's going on as an ai task --
+;; making connections, providing explanations
+;; it may be that trying is relatively cheap in computer realm, so selecting a good approach
+;; is less important than just having enough of them and being able to try them

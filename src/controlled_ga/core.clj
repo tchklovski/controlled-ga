@@ -2,30 +2,30 @@
   (:use [controlled-ga fitness-scoring mutation]
         ))
 
-(defn target-fn
-  [x]
-  (+ (* x x) 0.5))
+(def target-spec
+  '(+ (* x x) 0.5))
 
-
-(def raw-candidates
+(def candidate-specs
      '[x
        (* x x)])
 
-(defn make-candidate
-  [cand]
+(defn make-individual
+  [spec]
   (let [make-fn (memoize #(eval (list 'fn '[x] %)))]
-    {:expr cand
-     :fn (make-fn cand)}))
+    {:spec spec
+     :fn (make-fn spec)}))
 
-(defn score-raw-candidates
-  [raw-candidates target-fn]
-  (let [candidates (map make-candidate raw-candidates)]
-    (score-candidates target-fn candidates)))
+(def target (make-individual target-spec))
+(def candidates (map make-individual candidate-specs))
+
+(def fitness-fn (make-fitness-fn target))
+
 
 (defn show-scored-candidates
   [cands]
-  (map #(vec (map % [:err :expr])) cands))
+  (map #(vec (map % [:err :spec])) cands))
 
-; (in-ns 'controlled-ga.core)
-;(use '(incanter core stats charts))
-;(view (function-plot target-fn 0 1))
+;; (in-ns 'controlled-ga.core)
+;; (show-scored-candidates (score-candidates fitness-fn candidates))
+;;(use '(incanter core stats charts))
+;;(view (function-plot (:fn target) 0 1))
