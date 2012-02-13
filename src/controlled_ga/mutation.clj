@@ -38,27 +38,35 @@
   [p]
   (fn [] (<= (rand) p)))
 
-;; cf http://clojure.github.com/clojure/clojure.walk-api.html
-;; and http://clojure.github.com/clojure/clojure.zip-api.html
-(defn pick-node
+(defn zip-apply
+  "zip-world and back: turn seq into zip, apply zipfn that returns a loc and go back"
+  [zipfn]
+  (comp zip/node zipfn zip/seq-zip))
+
+(defn zip-rand-nth
+  "rand-nth of children of loc; loc must be zip/branch?"
+  [loc]
+  (let [rand-child-pos (rand (count (zip/children loc)))]
+    (nth (iterate zip/right (zip/down loc)) rand-child-pos)))
+
+(defn zip-pick-node
   "pick and return a random node (not necessarily leaf) in a tree
-   try it with eg (dotimes [foo 10] (prn (pick-node initial-expr)))"
-  [expr]
+   try it with eg (dotimes [_ 10] (prn (zip-apply zip-pick-node initial-expr)))"
+  [loc]
   (let [continue? (make-probability-tester 0.7)]
-    (if (and (coll? expr) (continue?))
-      (recur (rand-nth expr))
-      expr)))
+    (if (and (zip/branch? loc) (continue?))
+      (recur (zip-rand-nth loc))
+      loc)))
 
-(def mutate-expression-aux)
+(defn zip-mutate [loc]
+  (let [mut-loc (zip-pick-node loc)
+        mut-val (zip/node (zip-pick-node loc))]
+    (zip/root (zip/replace mut-loc mut-val))))
 
-(defn mutate
-  "deep, probabilistic mutation of the expression passed in"
-  [expr]
-  ;; terminate with a certain probability
-  (let [thresh 0.2]
-    (if (< (rand) thresh)
-      expr
-      (mutate-expression-aux expr))))
+(def mutate
+  "stochastic mutation of the expression passed in"
+  (comp zip/root zip-mutate zip/seq-zip))
+
 
 ;; visit aspects of the expression, mutating those
 
