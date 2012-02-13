@@ -1,6 +1,5 @@
 (ns controlled-ga.core
-  (:use [controlled-ga fitness-scoring mutation]
-        ))
+  (:use [controlled-ga fitness-scoring mutation]))
 
 (def target-spec
   '(+ (* x x) 0.5))
