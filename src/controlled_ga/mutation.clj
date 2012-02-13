@@ -61,7 +61,7 @@
 (defn zip-mutate [loc]
   (let [mut-loc (zip-pick-node loc)
         mut-val (zip/node (zip-pick-node loc))]
-    (zip/root (zip/replace mut-loc mut-val))))
+    (zip/replace mut-loc mut-val)))
 
 (def mutate
   "stochastic mutation of the expression passed in"
@@ -73,13 +73,3 @@
 ;; can mutate just one thing per generation (or zero)
 
 ;; mutator machinery vs. an actual (evolvable) mutator
-
-(defn mutate-expression-aux
-  [expr]
-  1)
-
-(defmulti mutate class)
-(defmethod mutate
-    Number [n]
-    (+ n 1))
-
