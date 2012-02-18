@@ -33,7 +33,7 @@
          (* x 1))))
 
 
-(defn make-probability-tester
+(defn truth-with-probability
   "returns a fn that returns true with probability p, false with 1-p"
   [p]
   (fn [] (<= (rand) p)))
@@ -53,7 +53,7 @@
   "pick and return a random node (not necessarily leaf) in a tree
    try it with eg (dotimes [_ 10] (prn (zip-apply zip-pick-node initial-expr)))"
   [loc]
-  (let [continue? (make-probability-tester 0.7)]
+  (let [continue? (truth-with-probability 0.7)]
     (if (and (zip/branch? loc) (continue?))
       (recur (zip-rand-nth loc))
       loc)))
@@ -64,11 +64,10 @@
     (zip/replace mut-loc mut-val)))
 
 (def mutate
-  "stochastic mutation of the expression passed in"
+  "stochastic mutation of the expression passed in
+   try eg (dotimes [_ 10] (prn (mutate initial-expr)))"
   (comp zip/root zip-mutate zip/seq-zip))
 
-
-;; visit aspects of the expression, mutating those
 
 ;; can mutate just one thing per generation (or zero)
 
