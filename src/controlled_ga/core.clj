@@ -37,9 +37,8 @@
         (sort-by :err scored-candidates)))
   ([candidates] (score-candidates fitness-fn candidates)))
 
-(defn show-candidate
-  [cand]
-  (vec (map cand [:err :spec])))
+(def show-candidate
+  (juxt [:err :spec]))
 
 (defn plot-vs-target [cand]
     (doto (function-plot (:fn target) 0 1)
